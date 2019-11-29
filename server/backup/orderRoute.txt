@@ -1,0 +1,67 @@
+router.get('/', auth.authenticate, async(req, res, next) => {
+   try {
+       var foundCart = await Cart.findOne({user_id: req.user._id});
+       if(!foundCart) {
+           res.status(400).send('Cart not found');
+       } else {
+           var order = await Order.aggregate([
+               { $match: {cart_id: foundCart._id} },
+               { $lookup: {
+                   from: 'users',
+                   localField: 'user_id',
+                   foreignField: '_id',
+                   as: 'user_info'
+               }},
+               { $unwind: '$user_info'},
+
+               { $lookup: {
+                   from: 'items',
+                   localField: 'cart_id',
+                   foreignField: 'cart_id',
+                   as: 'item_info'
+               }},
+               { $unwind: '$item_info'},
+
+               { $lookup: {
+                   from: 'products',
+                   localField: 'item_info.product_id',
+                   foreignField: '_id',
+                   as: 'product_info'
+               }},
+               { $unwind: '$product_info'},
+               { $match: {cart_id: foundCart._id}},
+               
+            //    { $unwind: '$user_info'},
+
+               { $group: {
+                   _id: null,
+                   order_data: {
+                       $push: {
+                           order_id: '$_id',
+                           user_id: '$user_id',
+                           cart_id: '$cart_id',
+                           total: {$sum: {$multiply: ['$item_info.quantity', '$product_info.price']}}
+                       }
+                   },
+                   user_data: {
+                       $push: {
+                           user_id: '$user_info._id',
+                           name: '$user_info.name'
+                       }
+                   },
+                   product_data: {
+                       $push: {
+                           product_id: '$product.info._id',
+                           name: '$product_info.name',
+                           price: '$product_info.price'
+                       }
+                   },
+                   grand: {$sum: {$multiply: ['$item_info.quantity', '$product_info.price']}}
+               }},
+           ]);
+           res.status(200).json(order);
+       }
+   } catch(err) {
+       res.status(400).json(err);
+   }
+});

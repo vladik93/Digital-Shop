@@ -1,0 +1,165 @@
+
+<div class="row mt-5">
+    <div class="col-md-1" id="hide-cart">
+        <i class="fas fa-minus-square" *ngIf="orderInProcess === false" (click)="onCollapseCart()" tooltip="Hide Cart" placement="bottom"></i>
+    </div>
+    <div class="col-md-5" id="cart-section">
+        <div class="card m-3 shadow" id="cart">
+            <div class="card-header p-3 bg-light" id="cart-header">
+                <h2 class="card-title text-center col-md-11" style="text-shadow: 1px 1px 1px gray" style="display: inline-block;">MY CART</h2>
+                <i class="fas fa-trash-alt" *ngIf="orderInProcess === false" id="delete-icon" (click)="deleteItemsModal(templateDelete)"></i>
+            </div>
+            <div class="card-body" id="cart-body">
+                <div *ngFor="let item of items?.data" class="m-1 ml-2 mb-2" style="display: inline-block">
+                    <div class="card shadow item-card bg-light rounded" style="width: 105px">
+                        <p class="item-name mt-2">{{item.name}}</p>
+                        <img src="./../../../assets/{{item.image}}" class="card-img-top border-top border-bottom" height="100">
+                        <p class="item-quantity mt-2">Qt: <span class="quantity-digit">{{item.quantity}}</span></p>
+                        <span id="x-sign" class="text-muted">X</span>
+                        <p class="item-price">{{item.price}}$</p>
+                        <i class="fas fa-window-close" *ngIf="orderInProcess === false" (click)="onItemDelete(item.item_id)" style="cursor: pointer;"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <p class="text-muted">Total: {{items?.grand_total}}$</p>
+                <button class="btn btn-light btn-block" (click)="onBackToShop()" *ngIf="orderInProcess === true">Back to shop</button>
+                <button class="btn btn-secondary btn-block ml-6" (click)="toOrderForm()" *ngIf="orderInProcess === false" [disabled]="items === undefined">ORDER</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-1" id="show-cart">
+        <i class="fas fa-plus-square" (click)="onExpandCart()" tooltip="Show Cart" placement="bottom"></i>
+    </div>
+    
+    <div class="col-md-6" id="order-section" *ngIf="orderInProcess === true">
+        <div class="card m-3 shadow" id="order-card">
+            <div class="card-header text-center p-3">
+                <h2 class="card-title" style="text-shadow: 1px 1px 1px gray">ORDER</h2>
+            </div>
+            <form (ngSubmit)="onCompleteOrder(orderFormData)" #orderFormData="ngForm">
+                <div class="card-body" id="order-card-body">
+                    <h3 class="card-subtitle">Shipping Details:</h3>
+                    <div class="form-group mt-3">
+                        <label for="city">City</label>
+                        <select class="form-control" id="city" name="shipping_city" [(ngModel)]="orderFormModel.city"  #city="ngModel" (change)="onCitySelect($event.target.value)" required>
+                            <option *ngFor="let city of cities" [value]="city.name">{{city.name}}</option>
+                        </select>
+                        <div *ngIf="city.pristine && city.touched" class="alert alert-danger">Select a city from the menu</div>
+                        <div *ngIf="city.errors?.required && orderSubmitAttempted" class="alert alert-danger">Select a city from the menu</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Street</label>
+                        <select class="form-control" id="street" name="shipping_street" #street="ngModel" [(ngModel)]="orderFormModel.street" required>
+                            <option *ngFor="let street of streets" [value]="street.name">{{street.name}}</option>
+                        </select>
+                        <div *ngIf="street.pristine && street.touched" class="alert alert-danger">Select a street from the menu</div>
+                        <div *ngIf="street.errors?.required && orderSubmitAttempted" class="alert alert-danger">Select a city from the menu</div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="shipping-date">Shipping Date</label>
+                        <input type="text" autocomplete="off" class="form-control" id="shipping-date" name="shipping_date" [(ngModel)]="orderFormModel.shipping_date"
+                        bsDatepicker [dateCustomClasses]="shippingDates" [datesDisabled]="datesDisabled" (onHidden)="onCalClose()">
+                        <alert type="danger" *ngIf="datesDisabled.length > 0 && datesDisabled.length < 3 && !dateError">
+                            <strong>{{datesDisabled.length}}/3</strong> dates are fully booked (3 orders per date)
+                        </alert>
+                        <alert type="danger" *ngIf="datesDisabled.length === 3 && !dateError">
+                            All dates are fully booked (3 orders on every date)
+                        </alert>
+                        <alert type="danger" *ngIf="dateError">
+                            {{dateError}}
+                        </alert>
+                    </div>
+                    <h3 class="card-subtitle mt-3">Payments:</h3>
+                    <div class="form-group mt-3">
+                        <label for="credit-card">Credit Card</label> <i class="fas fa-exclamation-circle ml-2" 
+                        style="font-size: 20px;" tooltip="Possible Testing Pattern: 4xxxxxxxxxxxxxxxx (x * 15)"></i>
+                        <input type="text" class="form-control" id="credit-card" name="credit_card" [(ngModel)]="orderFormModel.credit_card" [pattern]="creditCardRegex">
+                        <alert type="danger" *ngIf="creditCardError">
+                            {{creditCardError}}
+                        </alert>
+                    </div>
+                </div>
+                <div class="card-footer p-3" id="order-card-footer">
+                    <button type="submit" class="btn btn-secondary btn-block" >Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6" id="product-section" *ngIf="orderInProcess === false">  <!-- <div class='col-md-7'> -->
+        <div class="card m-3 shadow" id="product-card">
+            <div class="card-header text-center p-3">
+                <h2 id="product-title">PRODUCTS</h2>
+                <form>
+                    <div class="form-group input-group-lg mt-2" id="search-section">
+                        <input type="text" class="form-control shadow text-center" placeholder="Search Product..." id="search-input"
+                        (input)="onProductSearch($event.target.value)" [value]="productByNameModel">
+                    </div>
+                </form>
+                <button class="btn btn-link" (click)="onAllCategorySelect()">All</button>
+                <button *ngFor="let category of categories" class="btn btn-link" (click)="onCategorySelect(category._id)">
+                    {{category.name | titlecase}}
+                </button>
+            </div>
+            <div class="card-body" id="product-card-body">
+
+                <div class="card m-3 products shadow" *ngFor="let product of products">
+                    <div class="card-header">
+                        <p style="font-size: 11px;">{{product.name}}</p>
+                    </div>
+                    <img src="./../../../assets/{{product.image}}" class="card-img-top border-top border-bottom" height="100">
+                    <div class="card-body">
+                        <p class="card-title">{{product.category_info[0].name | titlecase}}</p>
+                        <p class="card-subtitle">{{product.price}}$</p>
+                        <button class="btn btn-block btn-secondary mt-1" (click)="productQuantityModal(template)">
+                            Add To Cart
+                        </button>
+                    </div>
+
+                    <ng-template #template>
+                            <div class="modal-header bg-light">
+                                <h4 class="modal-title col-md-12 text-center">Quantity</h4>
+                                <button type="button" class="close pull-right modal-close-icon" aria-label="Close" (click)="modalRef.hide()">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-center">How much would you like to buy ({{product.name}})?</p>
+                                <form (ngSubmit)="addNewItem(itemForm)" #itemForm="ngForm">
+                                    <div class="form-group col-md-8 offset-md-1" style="display: inline-block">
+                                        <input type="hidden" class="form-control" name="product_id" [(ngModel)]="product._id">
+                                    </div>
+                                    <div class="form-group col-md-8 offset-md-1" style="display: inline-block">
+                                        <input type="number" placeholder="Enter quantity here..." class="form-control" min="1" name="quantity" ngModel>
+                                    </div>
+                                    <button type="submit" class="btn btn-secondary mb-1" style="display: inline-block">Sumbit</button>
+                                </form>
+                            </div>
+                    </ng-template>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #templateDelete>
+    <div class="modal-header bg-light">
+        <h4 class="modal-title col-md-12 text-center">Delete All Items</h4>
+        <button type="button" class="close pull-right modal-close-icon" aria-label="Close" (click)="modalRef.hide(); onDeleteModalClose()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p class="text-center">Are you sure you want to delete  all items from your cart?</p>
+        <alert type="warning" *ngIf="deleteMessage">
+            <strong>Warning:</strong> {{deleteMessage}}
+        </alert>
+        <button type="button" class="btn btn-secondary btn-block m-1" style="display: inline-block" (click)="onDeleteAllItems()">DELETE</button>
+    </div>
+</ng-template>

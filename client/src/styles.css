@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    background-image: linear-gradient(to right top, #ffffff, #f8f7fc, #f1eff9, #eae8f6, #e3e0f3); 
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+}
+
+.ngx-text-highlight{
+    background:yellow;
+}

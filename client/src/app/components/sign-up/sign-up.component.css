@@ -1,0 +1,10 @@
+#stage-2 {
+    display: none;
+}
+
+#server-warning {
+    font-size: 25px;
+    color: red;
+    position: relative;
+    top: 5px;
+}

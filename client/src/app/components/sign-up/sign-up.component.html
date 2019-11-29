@@ -1,0 +1,88 @@
+<div class="row mt-5">
+  <div class="col-md-6 offset-md-3">
+    <div class="card v-100 m-3 shadow">
+      <div class="card-header p-3 bg-light">
+        <h1 class="text-center" style="text-shadow: 1px 1px 1px gray">SIGN UP</h1>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="onRegister(registerForm)" #registerForm="ngForm" >
+          <div id="stage-1">
+            <div class="form-group">
+              <label for="id">ID</label>
+              <input type="text" class="form-control form-control-lg" id="id" 
+              name="_id" #_id="ngModel" [(ngModel)]="registerData._id" (input)="onTouchedField('id')" autocomplete="false" pattern="^[0-9]*$" minlength="9" maxlength="9" required>
+              <!-- <div *ngIf="_id.invalid && (_id.dirty || _id.touched)" class="alert alert-danger">ID field needs to be filled</div> -->
+              <div *ngIf="_id.pristine && _id.touched || _id.dirty && _id.value.length === 0" class="alert alert-danger">ID field needs to be filled</div>
+              <div *ngIf="_id.errors?.pattern && !_id.untouched" class="alert alert-danger">ID must contain only digits</div>
+              <div *ngIf="_id.errors?.minlength && !_id.untouched && !_id.errors?.pattern"class="alert alert-danger">ID must contain 9 digits</div>
+              <div *ngIf="serverErrors?.id" class="alert alert-danger">{{serverErrors.id}}</div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control form-control-lg" id="email" 
+              name="email" #email="ngModel" [(ngModel)]="registerData.email" (input)="onTouchedField('email')" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" autocomplete="false" required>
+              <div *ngIf="email.pristine && email.touched || email.dirty && email.value.length === 0" class="alert alert-danger">Email field needs to be filled</div>
+              <div *ngIf="email.errors?.pattern && !email.untouched" class="alert alert-danger">Email not valid</div>
+              <div *ngIf="serverErrors?.email" class="alert alert-danger">{{serverErrors.email}}</div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control form-control-lg" id="password" name="password" #passwordVal="ngModel" [(ngModel)]="registerData.password" minlength="6" required>
+              <div *ngIf="passwordVal.pristine && passwordVal.touched || passwordVal.dirty && passwordVal.value.length === 0" class="alert alert-danger">Password field needs to be filled</div>
+              <div *ngIf="passwordVal.errors?.minlength && !passwordVal.untouched" class="alert alert-danger">Password must be at least 6 characters long</div>
+            </div>
+            <div class="form-group">
+              <label for="password-confirm">Confirm Password</label>
+              <input type="password" class="form-control form-control-lg" id="password-confirm" name="password_confirm" #passwordConfirm="ngModel" [(ngModel)]="registerData.password_confirm" [pattern]="passwordVal.value" required>
+              <div *ngIf="passwordConfirm.pristine && passwordConfirm.touched || passwordConfirm.dirty && passwordConfirm.value.length === 0 && passwordConfirm.valid" class="alert alert-danger">Password Confirm field needs to be filled</div>
+              <div *ngIf="passwordConfirm.invalid && !passwordConfirm.untouched && passwordConfirm.value.length !== 0" class="alert alert-danger">Password and Confirm Password don't match</div>
+            </div>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" value="true" name="admin" [(ngModel)]="registerData.admin">Administrator
+              </label>
+            </div>
+            <button type="button" class="btn btn-secondary btn-block mt-4" (click)="onFirstStageDone()"
+            [disabled]="email.errors?.required || email.errors?.pattern || _id.errors?.required || _id.errors?.pattern || _id.errors?.minlength || passwordVal.errors?.required || passwordVal.errors?.minlength || passwordConfirm.errors?.required || !passwordConfirm.valid">Next</button>
+          </div>
+          <div id="stage-2">
+            <div class="form-group">
+              <label for="city">City</label>
+              <select class="form-control form-control-lg" id="city" name="city" #city="ngModel" [(ngModel)]="registerData.city" (change)="onCitySelect($event.target.value)" required>
+                    <option *ngFor="let city of cities" [value]="city.name">{{city.name}}</option>
+              </select>
+              <div *ngIf="city.pristine && city.touched" class="alert alert-danger">Select a city from the menu</div>
+            </div>
+            <div class="form-group">
+              <label for="street">Street</label>
+              <select class="form-control form-control-lg" id="street" #street="ngModel" name="street" [(ngModel)]="registerData.street" required>
+                    <option *ngFor="let street of streets" [value]="street.name">{{street.name}}</option>
+              </select>
+              <div *ngIf="street.pristine && street.touched" class="alert alert-danger">Select a street from the menu</div>
+            </div>
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control form-control-lg" id="name" name="name" #name="ngModel" [(ngModel)]="registerData.name" (input)="onTouchedField('name')" required>
+              <div *ngIf="name.pristine && name.touched || name.dirty && name.value.length === 0" class="alert alert-danger">Name field needs to be filled</div>
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name</label>
+              <input type="text" class="form-control form-control-lg" id="last-name" name="last_name" #lastName="ngModel" [(ngModel)]="registerData.last_name" (input)="onTouchedField('lastName')" required>
+              <div *ngIf="lastName.pristine && lastName.touched || lastName.dirty && lastName.value.length === 0" class="alert alert-danger">Last Name field needs to be filled</div>
+              <div *ngIf="serverErrors?.username" class="alert alert-danger">{{serverErrors.username}}</div>
+            </div>
+            <button class="btn btn-secondary btn-block mt-4" type="submit"
+            [disabled]="city.errors?.required || street.errors?.required || name.errors?.required || lastName.errors?.required">Finish</button>
+          </div>
+          <a class="ml-3 btn btn-link" [routerLink]="['/main']" [routerLinkActive]="active">Login</a>
+          <button class="btn btn-link" *ngIf="stageOneDone" (click)="onFormGoBack()" [ngStyle]="{'color': formErrorsFound ? 'red': 'null'}">Go Back</button>
+          <i *ngIf="formErrorsFound" class="fas fa-exclamation-circle" id="server-warning"
+          tooltip="Form request returned with errors. Check all fields!" position="bottom"></i>
+        </form>
+      </div>
+      <!-- <div class="card-footer p-3 bg-light">
+        <h1 class="text-light">Placeholder</h1>
+      </div> -->
+    </div>
+  </div>
+  

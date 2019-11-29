@@ -1,0 +1,173 @@
+/* #cart-section {
+    margin-top: 35px;
+} */
+
+#cart {
+    height: 600px;
+    position: relative;
+    
+}
+/* #product-section {
+    display: none;
+} */
+
+#product-section.col-md-10 .products {
+    left: 100px;
+}
+
+
+.item-name {
+    font-size: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.item-quantity {
+    font-size: 12px;
+    text-align: center;
+
+}
+
+.item-price {
+    font-size: 11px;
+    text-align: center;
+}
+
+.item-card {
+    position: relative;
+}
+
+#x-sign {
+    font-size: 9px;
+    position: absolute;
+    top: 166px;
+    left: 50px;
+}
+
+.quantity-digit {
+    color:#5892ed;
+    font-weight: bold;
+}
+
+.fa-window-close {
+    position: absolute;
+    font-size: 20px;
+    top: 190px;
+    left: 80px;
+    color: #666666;
+}
+
+#cart-body {
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    background:#d9d9d9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #b3b3b3;
+    border-radius: 1ex;
+    -webkit-border-radius: 1ex;
+}
+
+#show-cart {
+    
+    color: #999999;
+    text-shadow: 1px 1px 3px black;
+    font-size: 40px;
+    /* position: absolute; */
+    /* left: -665px;
+    top: 0px; */
+    margin-top: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+#hide-cart {
+    /* position: absolute; */
+    color: #999999;
+    text-shadow: 1px 1px 3px black;
+    font-size: 40px;
+    /* left: 362px;
+    top: -19px; */
+    cursor: pointer;
+    margin-top: 5px;
+
+}
+
+#arrow-left:hover {
+    color: #666666;
+}
+
+#cart-header {
+    position: relative;
+}
+
+.products { 
+    display: inline-block;
+    width: 180px;
+    text-align: center;
+    left: 20px;
+}
+
+#product-title {
+    text-shadow: 1px 1px 1px gray;
+}
+
+.products .card-title {
+    font-size: 12px;
+}
+
+.products .card-subtitle {
+    font-size: 14px;
+}
+
+#product-card-body {
+    overflow-y: scroll;
+}
+
+#product-card {
+    height: 600px;
+}
+
+#search-input {
+    font-size: 15px;
+    margin-top: 25px;
+}
+
+#search-input::placeholder {
+    font-size: 15px;
+}
+
+#order-card-body {
+    overflow-y: scroll;
+    /* height: 445px; */
+    height: 415px;
+}
+
+#order-card-footer {
+    height: 100px;
+}
+
+#order-card-footer button {
+    margin-top: 20px;
+}
+
+#delete-icon {
+    display: inline-block;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+#delete-icon:hover {
+    color: #b3c7e8;
+}
+
+.modal-close-icon {
+    position: relative;
+    right: 30px;
+    font-size: 30px;
+}

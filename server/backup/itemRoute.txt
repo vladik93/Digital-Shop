@@ -1,0 +1,53 @@
+router.get('/', auth.authenticate, async(req, res) => {
+    try {
+        var foundCart = await Cart.findOne({user_id: req.user._id});
+        if(!foundCart) {
+            return res.status(400).send('Cart not found');
+        } else {
+            var items = await Item.aggregate([
+                { $match: { cart_id: foundCart._id} },
+                { $lookup: {
+                    from: "products",
+                    localField: "product_id",
+                    foreignField: "_id",
+                    as: "product_info"
+                },
+            },
+            { $unwind: '$product_info'},
+            { $group: 
+                {  
+                    _id: '$_id',
+                    item_info: {$addToSet: {
+                        cart_id: '$cart_id',
+                        quantity: '$quantity',
+                        total: {$sum: {$multiply: ['$quantity', '$product_info.price']}},
+
+                    }},
+                    product_info: {$addToSet: {
+                        _id: '$product_info._id',
+                        name: '$product_info.name',
+                        image: '$product_info.image',
+                        price: '$product_info.price'
+                    }},
+                }
+            },
+            {$unwind: '$item_info'},
+            {$unwind: '$product_info'},
+            { $group: {
+                _id: null,
+                grand_total:  {
+                    $sum: '$item_info.total'
+                }
+            }},
+            { $unwind: '$grand_total'}
+            ])
+            if(!items) {
+                return res.status(400).send('Items were not found in the cart');
+            } else {
+                res.status(200).json(items);
+            }
+        }
+    } catch(err) {
+        res.status(400).json(err);
+    }
+});

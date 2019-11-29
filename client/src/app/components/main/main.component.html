@@ -1,0 +1,98 @@
+<div class="row mt-5">
+  <div class="col-md-4" *ngIf="session === false">
+    <div class="card h-100 m-3 shadow">
+      <div class="card-header p-3 bg-light">
+        <h1 class="text-center" style="text-shadow: 1px 1px 1px gray">LOGIN</h1>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control form-control-lg" id="email" name="email" #email="ngModel" [(ngModel)]="loginData.email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control form-control-lg" id="password" name="password" #password="ngModel" [(ngModel)]="loginData.password" required>
+          </div>
+          <div *ngIf="loginError" class="alert alert-danger">{{loginError}}</div>
+          <button class="btn btn-secondary btn-block mt-4">Login</button>
+          <a class="ml-3" [routerLink]="['/signup']" [routerLinkActive]="active">Sign Up</a>
+        </form>
+      </div>
+      <!-- <div class="card-footer p-3 bg-light">
+        <h1 class="text-light">Placeholder</h1>
+      </div> -->
+    </div>
+  </div>
+
+  <div class="col-md-4" *ngIf="session === true">
+    <div class="card m-3 shadow">
+      <div class="card-header p-3">
+        <h1 class="text-center" style="text-shadow: 1px 1px 1px gray">LOGGED IN</h1>
+      </div>
+      <div class="card-body">
+        <img src="../../../assets/images/avatar.png" class="card-img-top mb-4" style="height: 170px;">
+        <h5 class="card-title text-center border-bottom">{{user.name}} {{user.last_name}}</h5>
+        <div class="alert alert-light shadow text-center" id="resume-button" (click)="onStartShopping(template)">
+          <h3>START</h3>
+          <h3>SHOPPING</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100 m-3 shadow">
+      <div class="card-header p-3 bg-light">
+        <h1 class="text-center" style="text-shadow: 1px 1px 1px gray">ABOUT US</h1>
+      </div>
+      <div class="card-body">
+          <img class="card-img-top mb-3" src="../../../assets/images/logo.jpg">
+        <h6 class="card-text">This is my shop You should definitely buy here! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nec molestie mi, sit amet suscipit tellus. Vestibulum eget tortor vitae metus aliquet pulvinar non ut urna. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras at mi eu augue mattis efficitur ac nec turpis</h6>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100 m-3 shadow">
+      <div class="card-header p-3 bg-light">
+        <h1 class="text-center" style="text-shadow: 1px 1px 1px gray">MORE INFO.</h1>
+      </div>
+      <div class="card-body">
+        <img src="../../../assets/images/cart.jpg" class="card-img-top mb-3">
+        <div class="orders mt-3">
+          <h5 class="card-text text-center">Total Orders:</h5>
+          <h2 class="text-center" id="order-count" *ngIf="orderCount">{{orderCount.orderCount}}</h2>
+          <h2 class="text-center" id="order-count" *ngIf="!orderCount">0</h2>
+        </div>
+        <div class="products mt-3">
+          <h5 class="card-text text-center">Total Products:</h5>
+          <h2 class="text-center" id="product-count" *ngIf="productCount">{{productCount.productCount}}</h2>
+          <h2 class="text-center" id="product-count" *ngIf="!productCount">0</h2>
+        </div>
+        <div class="alert alert-info mt-3" *ngIf="session === true && cart">
+          <h5>NOTIFICATION:</h5>
+          <p>You have an open cart from date <strong >{{cart.date_created | date: 'short'}}</strong></p>
+        </div>
+        <div class="alert alert-info mt-3" *ngIf="session === true && lastOrder && !cart">
+          <h5>NOTIFICATION:</h5>
+          <p>Your last order was on <strong>{{lastOrder.order_date | date: 'short'}}</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #template>
+    <div class="modal-header bg-light">
+        <h4 class="modal-title col-md-12 text-center">No Cart Found</h4>
+        <button type="button" class="close pull-right modal-close-icon" aria-label="Close" (click)="modalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p class="text-center">It appears that you don't have a cart.</p>
+        <p class="text-center">Create/renew your cart to continue shopping here.</p>
+        <button class="btn btn-secondary btn-block" (click)="onCreateCart()">CREATE CART</button> 
+    </div>
+</ng-template>

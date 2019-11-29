@@ -1,0 +1,109 @@
+<div class="row mt-5">
+    <div class="col-md-12" id="download-content">
+        <div class="card shadow">
+            <div class="card-header text-center bg-white">
+                <h1 class="card-title">RECEIPT</h1>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div id="order-info" class="col-md-6" *ngFor="let order of receipt.order_info">
+                        <h6>Order ID:</h6>
+                        <p>{{order.order_id}}</p>
+                        <h6>Shipping Location:</h6>
+                        <p>{{order.shipping_city}}, {{order.shipping_street}}</p>
+                        <h6>Shipping Date:</h6>
+                        <p>{{order.shipping_date}}</p>
+                        <h6>Cart ID:</h6>
+                        <p>{{order.cart_id}}</p>
+                        <h6>Credit Digits:</h6>
+                        <p>xxxx-xxxx-xxxx-{{order.credit_card}}</p>
+                    </div>
+                    <div id="user-info" class="col-md-6" *ngFor="let order of receipt.user_info">
+                        <h6>User ID:</h6>
+                        <p>{{order.user_id}}</p>
+                        <h6>Full Name:</h6>
+                        <p>{{order.name}} {{order.lastname}}</p>
+                        <h6>Email:</h6>
+                        <p>{{order.email}}</p>
+                        <h6>Full Address:</h6>
+                        <p>{{order.city}}, {{order.street}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <form>
+                            <div class="form-group col-md-12">
+                                <input type="text" class="form-control text-center" placeholder="SEARCH RECEIPT" autocomplete="off" 
+                                name="receipt_search" [(ngModel)]="receiptSearchText">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div id="cart-info" class="col-md-12">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th></th>
+                                    <th>Quantity</th>
+                                    <th></th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let order of receipt.cart_info">
+                                    <td ngxTextHighlight [content]="order.product_name" [searchTerm]="receiptSearchText" [caseSensitive]="false">{{order.product_name}}</td>
+                                    <td>{{order.product_price}} <span class="text-muted">$</span></td>
+                                    <td style="font-size: 10px; padding-top: 20px;" class="text-muted">X</td>
+                                    <td>{{order.item_quantity}}</td>
+                                    <td style="font-size: 10px; padding-top: 20px;" class="text-muted">=</td>
+                                    <td>{{order.item_total}} <span class="text-muted">$</span></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Grand Total:</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <td style="font-size: 10px; padding-top: 20px;" class="text-muted">=</td>
+                                    <th>{{receipt.grand_total}} $</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer" data-html2canvas-ignore>
+                <button class="btn btn-secondary" (click)="deleteCartAndRedirect()">
+                    To Login
+                </button>
+
+                <i class="fas fa-exclamation-circle ml-4" id="receipt-warning" 
+                tooltip="Closing the receipt page will delete your current cart. Renew it on the login page"
+                placement="bottom">
+
+                </i>
+
+                <button class="btn btn-link offset-md-9" (click)="onReceiptDownload()">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #template>
+        <div class="modal-header bg-light">
+            <h4 class="modal-title col-md-12 text-center">NOTE</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+           <p>Your cart will be removed. Renew your cart at the login page to continue shopping.</p>
+           <p class="text-muted" style="font-size: 12px;">Contact the owner in case you want info. on previous orders</p>
+           <p style="font-weight: bold; display: inline-block">Thank you and good day!</p>
+           <button class="btn btn-secondary inline offset-md-5">CLOSE</button>
+        </div>
+</ng-template>

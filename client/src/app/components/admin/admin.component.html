@@ -1,0 +1,120 @@
+<div class="row mt-5">
+  <div class="col-md-5">
+      <div class="card m-3 shadow" id="new-product-form" *ngIf="updateInProgress === false">
+          <div class="card-header p-3 bg-light" id="cart-header">
+              <h2 class="card-title text-center" style="text-shadow: 1px 1px 1px gray">NEW PRODUCT</h2>
+          </div>
+          <div class="card-body" id="cart-body">
+              <form (ngSubmit)="onNewProductSubmit(newProductData)" #newProductData="ngForm">
+                <div class="form-group">
+                  <label for="product-name">Name</label>
+                  <input type="text" class="form-control" id="product-name" name="name" [(ngModel)]="productModel.name">
+                </div>
+                <div class="form-group">
+                  <label for="product-category">Category</label>
+                  <select class="form-control" id="product-category" name="category_id" [(ngModel)]="productModel.category_id">
+                    <option selected hidden>Select Category</option>
+                    <option *ngFor="let category of categories" [value]="category._id">{{category.name | titlecase}}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="product-price">Price</label>
+                  <input type="number" class="form-control" name="price" min="1" max="1000" [(ngModel)]="productModel.price">
+                </div>         
+                <div class="form-group">
+                  <label for="product-image">Image <span class="text-muted" style="font-size: 13px;">(path: 'images/...')</span></label>
+                  <input type="text" class="form-control" name="image" [(ngModel)]="productModel.image">
+                </div>
+                <button type="submit" class="btn btn-secondary btn-block mt-5">SUBMIT</button>     
+              </form>
+              <button class="btn btn-link" (click)="newCategoryModal(template)">Add Category</button>
+          </div>
+      </div>
+      <div class="card m-3 shadow" id="new-product-form" *ngIf="updateInProgress === true">
+          <div class="card-header p-3 bg-light" id="cart-header">
+              <h2 class="card-title text-center" style="text-shadow: 1px 1px 1px gray">UPDATE PRODUCT</h2>
+          </div>
+          <div class="card-body" id="cart-body">
+              <form (ngSubmit)="onProductUpdate(productUpdateData)" #productUpdateData="ngForm">
+                <div class="form-group">
+                  <input type="hidden" class="form-control" id="product-id" name="_id" [(ngModel)]="productById._id">
+                </div>
+                <div class="form-group">
+                  <label for="product-name">Name</label>
+                  <input type="text" class="form-control" id="product-name" name="name" [(ngModel)]="productById.name">
+                </div>
+                <div class="form-group">
+                  <label for="product-category">Category</label>
+                  <select class="form-control" id="product-category" name="category_id" [(ngModel)]="productById.category_id">
+                    <option *ngFor="let category of categories" [value]="category._id">{{category.name | titlecase}}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="product-price">Price</label>
+                  <input type="number" class="form-control" name="price" min="1" max="1000" [(ngModel)]="productById.price">
+                </div>         
+                <div class="form-group">
+                  <label for="product-image">Image <span class="text-muted" style="font-size: 13px;">(path: 'images/...')</span></label>
+                  <input type="text" class="form-control" name="image" [(ngModel)]="productById.image">
+                </div>
+                <button type="submit" class="btn btn-secondary btn-block mt-5">SUBMIT</button>     
+              </form>
+              <button class="btn btn-link" (click)="onNewProductLink()">New Product</button>
+          </div>
+          <!-- <div class="card-footer p-4">
+            <p></p>
+          </div> -->
+      </div>
+    </div>
+    <div class="col-md-7 mt-3">
+      <div class="card shadow" id="product-card">
+        <div class="card-header text-center p-3">
+          <h2 class="text-center">PRODUCTS</h2>
+          <form>
+              <div class="form-group input-group-lg mt-2" id="search-section">
+                  <input type="text" class="form-control shadow text-center" placeholder="Search Product..." id="search-input"
+                  (input)="onProductSearch($event.target.value)">
+              </div>
+          </form>
+          <button class="btn btn-link" (click)="onAllCategorySelect()">All</button>
+          <button *ngFor="let category of categories" class="btn btn-link" (click)="onCategorySelect(category._id)" tooltip="ID: {{category._id}}" placement="bottom"> 
+              {{category.name | titlecase}}
+          </button>
+        </div>
+        <div class="card-body" id="product-card-body">
+          <div class="card m-1 shadow products" *ngFor="let product of products" (click)="productByIdData(product._id)">
+            <div class="card-header">
+              <p class="card-title"><strong>{{product.name}}</strong></p>
+            </div>
+            <img src="assets/{{product.image}}" class="card-img-top border-top border-bottom" height="100">
+            <div class="card-body">
+                <p class="card-title"><strong>ID:</strong> {{product._id}}</p>
+                <p class="card-title"><strong>Category:</strong> {{product.category_info[0].name | titlecase}}</p>
+                <p class="card-title"><strong>Cost:</strong> {{product.price}}$</p>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="card-footer p-4">
+          <p></p>
+        </div> -->
+      </div>
+    </div>
+</div>
+
+<ng-template #template>
+    <div class="modal-header bg-light">
+        <h4 class="modal-title col-md-12 text-center">New Category</h4>
+        <button type="button" class="close pull-right modal-close-icon" aria-label="Close" (click)="modalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p class="text-center">Enter Category Name</p>
+        <form (ngSubmit)="onNewCategory(categoryForm)" #categoryForm="ngForm">
+            <div class="form-group col-md-9 offset-md-1" style="display: inline-block">
+                <input type="text" class="form-control" placeholder="Category Name..." name="name" ngModel>
+            </div>
+            <button type="submit" class="btn btn-secondary mb-1" style="display: inline-block">Sumbit</button>
+        </form>
+    </div>
+</ng-template>

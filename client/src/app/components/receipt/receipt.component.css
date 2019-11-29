@@ -1,0 +1,12 @@
+#receipt-warning {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
+    border: none;
+}

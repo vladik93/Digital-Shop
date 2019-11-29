@@ -1,0 +1,42 @@
+#search-input {
+    font-size: 15px;
+    margin-top: 25px;
+}
+
+#search-input::placeholder {
+    font-size: 15px;
+}
+
+.products { 
+    display: inline-block;
+    width: 180px;
+    text-align: center;
+    left: 20px;
+    cursor: pointer;
+}
+
+.products .card-title {
+    font-size: 12px;
+}
+
+.products .card-subtitle {
+    font-size: 14px;
+}
+
+#product-card-body {
+    overflow-y: scroll;
+}
+
+#product-card {
+    height: 600px;
+}
+
+#new-product-form {
+    height: 600px;
+}
+
+.modal-close-icon {
+    position: relative;
+    right: 30px;
+    font-size: 30px;
+}
